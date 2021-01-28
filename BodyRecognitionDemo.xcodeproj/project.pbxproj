@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		AC2696B625C234520088ABB0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696B525C234520088ABB0 /* AppDelegate.swift */; };
 		AC2696B825C234520088ABB0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696B725C234520088ABB0 /* SceneDelegate.swift */; };
-		AC2696BA25C234520088ABB0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696B925C234520088ABB0 /* ViewController.swift */; };
+		AC2696BA25C234520088ABB0 /* AVCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696B925C234520088ABB0 /* AVCaptureViewController.swift */; };
 		AC2696BD25C234520088ABB0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC2696BB25C234520088ABB0 /* Main.storyboard */; };
 		AC2696BF25C234530088ABB0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC2696BE25C234530088ABB0 /* Assets.xcassets */; };
 		AC2696C225C234530088ABB0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC2696C025C234530088ABB0 /* LaunchScreen.storyboard */; };
 		AC2696CD25C234530088ABB0 /* BodyRecognitionDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696CC25C234530088ABB0 /* BodyRecognitionDemoTests.swift */; };
 		AC2696D825C234530088ABB0 /* BodyRecognitionDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696D725C234530088ABB0 /* BodyRecognitionDemoUITests.swift */; };
+		AC2696EC25C234FA0088ABB0 /* VisionBodyDetectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696EB25C234FA0088ABB0 /* VisionBodyDetectionViewController.swift */; };
+		AC2696F125C235090088ABB0 /* VisionBodyDetectionPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2696F025C235090088ABB0 /* VisionBodyDetectionPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +40,7 @@
 		AC2696B225C234520088ABB0 /* BodyRecognitionDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BodyRecognitionDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC2696B525C234520088ABB0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC2696B725C234520088ABB0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		AC2696B925C234520088ABB0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		AC2696B925C234520088ABB0 /* AVCaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCaptureViewController.swift; sourceTree = "<group>"; };
 		AC2696BC25C234520088ABB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AC2696BE25C234530088ABB0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AC2696C125C234530088ABB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,6 +51,8 @@
 		AC2696D325C234530088ABB0 /* BodyRecognitionDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BodyRecognitionDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC2696D725C234530088ABB0 /* BodyRecognitionDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyRecognitionDemoUITests.swift; sourceTree = "<group>"; };
 		AC2696D925C234530088ABB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC2696EB25C234FA0088ABB0 /* VisionBodyDetectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBodyDetectionViewController.swift; sourceTree = "<group>"; };
+		AC2696F025C235090088ABB0 /* VisionBodyDetectionPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBodyDetectionPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,7 +105,9 @@
 			children = (
 				AC2696B525C234520088ABB0 /* AppDelegate.swift */,
 				AC2696B725C234520088ABB0 /* SceneDelegate.swift */,
-				AC2696B925C234520088ABB0 /* ViewController.swift */,
+				AC2696B925C234520088ABB0 /* AVCaptureViewController.swift */,
+				AC2696EB25C234FA0088ABB0 /* VisionBodyDetectionViewController.swift */,
+				AC2696F025C235090088ABB0 /* VisionBodyDetectionPresenter.swift */,
 				AC2696BB25C234520088ABB0 /* Main.storyboard */,
 				AC2696BE25C234530088ABB0 /* Assets.xcassets */,
 				AC2696C025C234530088ABB0 /* LaunchScreen.storyboard */,
@@ -258,9 +264,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC2696BA25C234520088ABB0 /* ViewController.swift in Sources */,
+				AC2696BA25C234520088ABB0 /* AVCaptureViewController.swift in Sources */,
 				AC2696B625C234520088ABB0 /* AppDelegate.swift in Sources */,
+				AC2696EC25C234FA0088ABB0 /* VisionBodyDetectionViewController.swift in Sources */,
 				AC2696B825C234520088ABB0 /* SceneDelegate.swift in Sources */,
+				AC2696F125C235090088ABB0 /* VisionBodyDetectionPresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
