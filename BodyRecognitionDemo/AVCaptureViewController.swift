@@ -12,6 +12,16 @@ protocol AVCaptureViewProtocol {
     func setupAVCapture()
 }
 
+enum AVCaptureError: Swift.Error {
+    case cameraInputUnavailable
+    case cameraUnavailable
+    case cameraUnableToLockConfiguration
+    case sessionUnableToAddInput
+    case sessionUnableToAddOutput
+    case videoOutputMissingConnection
+    case unknown
+}
+
 class AVCaptureViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
 
     var bufferSize: CGSize = .zero
@@ -33,48 +43,56 @@ class AVCaptureViewController: UIViewController, AVCaptureVideoDataOutputSampleB
         do {
             let session = try getAVCaptureSession()
             setupRootLayerFor(session)
-        } catch let error {
+        } catch let error as AVCaptureError {
+            handleAVCaptureError(error)
+        } catch {
             print(error)
         }
     }
 
+    func handleAVCaptureError(_ error: AVCaptureError) {
+        print(error)
+    }
+
     func getAVCaptureSession() throws -> AVCaptureSession {
         var deviceInput: AVCaptureDeviceInput!
-        let videoDevice = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .back).devices.first
+        guard let videoDevice = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .back).devices.first else {
+            throw AVCaptureError.cameraUnavailable
+        }
         do {
-            deviceInput = try AVCaptureDeviceInput(device: videoDevice!)
-        } catch let error {
-            print("Could not create video device input: \(error)")
-            throw error
+            deviceInput = try AVCaptureDeviceInput(device: videoDevice)
+        } catch {
+            throw AVCaptureError.cameraInputUnavailable
         }
         session.beginConfiguration()
         session.sessionPreset = .vga640x480 // Model image size is smaller.
         guard session.canAddInput(deviceInput) else {
             print("Could not add video device input to the session")
             session.commitConfiguration()
-            throw NSError()
+            throw AVCaptureError.sessionUnableToAddInput
         }
         session.addInput(deviceInput)
-        if session.canAddOutput(videoDataOutput) {
-            session.addOutput(videoDataOutput)
-            videoDataOutput.alwaysDiscardsLateVideoFrames = true
-            videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)]
-            videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)
-        } else {
+        guard session.canAddOutput(videoDataOutput) else {
             print("Could not add video data output to the session")
             session.commitConfiguration()
-            throw NSError()
+            throw AVCaptureError.sessionUnableToAddOutput
         }
-        let captureConnection = videoDataOutput.connection(with: .video)
-        captureConnection?.isEnabled = true
+        session.addOutput(videoDataOutput)
+        videoDataOutput.alwaysDiscardsLateVideoFrames = true
+        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)]
+        videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)
+        guard let captureConnection = videoDataOutput.connection(with: .video) else {
+            throw AVCaptureError.videoOutputMissingConnection
+        }
+        captureConnection.isEnabled = true
         do {
-            try  videoDevice!.lockForConfiguration()
-            let dimensions = CMVideoFormatDescriptionGetDimensions((videoDevice?.activeFormat.formatDescription)!)
+            try videoDevice.lockForConfiguration()
+            let dimensions = CMVideoFormatDescriptionGetDimensions((videoDevice.activeFormat.formatDescription))
             bufferSize.width = CGFloat(dimensions.width)
             bufferSize.height = CGFloat(dimensions.height)
-            videoDevice!.unlockForConfiguration()
-        } catch let error {
-            throw error
+            videoDevice.unlockForConfiguration()
+        } catch {
+            throw AVCaptureError.cameraUnableToLockConfiguration
         }
         session.commitConfiguration()
         return session
