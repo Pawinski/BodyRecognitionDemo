@@ -32,7 +32,10 @@ class AVCaptureViewController: UIViewController, AVCaptureVideoDataOutputSampleB
     private var previewLayer: AVCaptureVideoPreviewLayer! = nil
     private let videoDataOutput = AVCaptureVideoDataOutput()
 
-    private let videoDataOutputQueue = DispatchQueue(label: "VideoDataOutput", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
+    private let videoDataOutputQueue = DispatchQueue(label: "VideoDataOutput",
+                                                     qos: .userInitiated,
+                                                     attributes: [],
+                                                     autoreleaseFrequency: .workItem)
 
     override func viewDidLoad() {
         super.viewDidLoad()

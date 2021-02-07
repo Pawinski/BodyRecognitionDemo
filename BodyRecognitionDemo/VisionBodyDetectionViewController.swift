@@ -9,10 +9,15 @@ import UIKit
 import AVFoundation
 
 protocol AVCaptureViewControllerProtocol {
-    func drawPoints(points: [CGPoint])
+    func drawPoints(pointViewModels: [PointViewModel])
     func setupLayers()
     func updateLayerGeometry()
     func createPointSublayerAtPoint(_ point: CGPoint) -> CALayer
+}
+
+struct PointViewModel: Hashable {
+    let x: CGFloat
+    let y: CGFloat
 }
 
 class VisionBodyDetectionViewController: AVCaptureViewController, AVCaptureViewControllerProtocol {
@@ -20,11 +25,12 @@ class VisionBodyDetectionViewController: AVCaptureViewController, AVCaptureViewC
     private var detectionOverlay: CALayer! = nil
     let presenter = VisionBodyDetectionPresenter()
 
-    func drawPoints(points: [CGPoint]) {
+    func drawPoints(pointViewModels: [PointViewModel]) {
         CATransaction.begin()
         CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
-        detectionOverlay.sublayers = nil // remove all the old recognized objects
-        points.forEach { detectionOverlay.addSublayer(self.createPointSublayerAtPoint($0)) }
+        detectionOverlay.sublayers = nil
+        let cgPoints = pointViewModels.compactMap { CGPoint(x: $0.x, y: $0.y) }
+        cgPoints.forEach { detectionOverlay.addSublayer(createPointSublayerAtPoint($0)) }
         CATransaction.commit()
     }
 
@@ -38,20 +44,18 @@ class VisionBodyDetectionViewController: AVCaptureViewController, AVCaptureViewC
 
     override func setupAVCapture() {
         super.setupAVCapture()
-
-        // setup Vision parts
         setupLayers()
         updateLayerGeometry()
         presenter.setupVision(frameWidth: bufferSize.width,
-                              frameHeight: bufferSize.height,
-                              completion: { self.drawPoints(points: $0) })
-
-        // start the capture
+                              frameHeight: bufferSize.height) {
+                                let pointViewModels = $0.compactMap { PointViewModel(x: $0.x, y: $0.y) }
+                                self.drawPoints(pointViewModels: pointViewModels)
+                              }
         startCaptureSession()
     }
 
     func setupLayers() {
-        detectionOverlay = CALayer() // container layer that has all the renderings of the observations
+        detectionOverlay = CALayer()
         detectionOverlay.name = "DetectionOverlay"
         detectionOverlay.bounds = CGRect(x: 0.0,
                                          y: 0.0,
@@ -72,9 +76,7 @@ class VisionBodyDetectionViewController: AVCaptureViewController, AVCaptureViewC
         }
         CATransaction.begin()
         CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
-        // rotate the layer into screen orientation and scale and mirror
         detectionOverlay.setAffineTransform(CGAffineTransform(rotationAngle: CGFloat(.pi / 2.0)).scaledBy(x: scale, y: -scale))
-        // center the layer
         detectionOverlay.position = CGPoint(x: bounds.midX, y: bounds.midY)
         CATransaction.commit()
     }

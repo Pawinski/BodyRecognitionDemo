@@ -30,8 +30,6 @@ class VisionBodyDetectionPresenter: PresenterProtocol, VisionHandlerProtocol {
             guard let recognizedPoints = try? objectObservation.recognizedPoints(forGroupKey: .all) else {
                 continue
             }
-
-            // Torso point keys in a clockwise ordering.
             let torsoKeys: [VNRecognizedPointKey] = [
                 .bodyLandmarkKeyNose,
                 .bodyLandmarkKeyLeftEye,
@@ -53,12 +51,11 @@ class VisionBodyDetectionPresenter: PresenterProtocol, VisionHandlerProtocol {
                 .bodyLandmarkKeyLeftAnkle,
                 .bodyLandmarkKeyRightAnkle
             ]
-
-            // Retrieve the CGPoints containing the normalized X and Y coordinates.
             let imagePoints: [CGPoint] = torsoKeys.compactMap {
-                guard let point = recognizedPoints[$0], point.confidence > 0.5 else { return nil }
-
-                // Translate the point from normalized-coordinates to image coordinates.
+                guard let point = recognizedPoints[$0],
+                      point.confidence > 0.5 else {
+                    return nil
+                }
                 return VNImagePointForNormalizedPoint(point.location,
                                                       Int(frameWidth),
                                                       Int(frameHeight))
@@ -75,12 +72,10 @@ class VisionBodyDetectionPresenter: PresenterProtocol, VisionHandlerProtocol {
                 print(error!)
                 return
             }
-            DispatchQueue.main.async(execute: {
-                if let results = request.results {
-                    let imagePoints = self.imagePoints(for: results, frameWidth: frameWidth, frameHeight: frameHeight)
-                    completion(imagePoints)
-                }
-            })
+            if let results = request.results {
+                let imagePoints = self.imagePoints(for: results, frameWidth: frameWidth, frameHeight: frameHeight)
+                completion(imagePoints)
+            }
         })
         requests = [bodyRequest]
     }
